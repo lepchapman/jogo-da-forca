@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Jogo da Forca</title>
+        <style>
+            .letra {
+                width: 30px;
+                font-size: 30px;
+                text-transform: uppercase;
+                text-align: center;
+                margin: 5px;
+                display: none;
+                border: none;
+                border-bottom: 1px solid green;
+            }
+            #letraJ {
+                width: 30px;
+                font-size: 30px;
+                text-transform: uppercase;
+                text-align: center;
+                margin: 5px;
+                border: 1px solid green;
+                border-radius: 3px;
+            }
+            .dvdisplay {
+                margin: 20px auto;
+                text-align: center;
+            }
+            #dvForca {
+                float: left;
+            }
+            img {
+                width: 500px;
+            }
+            button {
+                background-color: darkgreen;
+                color: white;
+                border: 1px solid green;
+                border-radius: 3px;
+            }
+            h1 {
+                text-align: center;
+                color: darkgreen;
+            }
+            #dvletrasdigitadas {
+                text-align: center;
+                border: 1px solid green;
+                border-radius: 3px;
+                padding: 5px;
+            }
+            table{
+                border: 1px solid darkgreen;
+                border-radius: 5px;
+                padding: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Jogo da Forca</h1>
+        <table align="center">
+            <tr>
+                <td>
+                    <div id="dvForca">
+                        <img id="img" src="1.png">
+                    </div>
+                </td>
+                <td width="600px">
+                    <div id="dvmenu" class="dvdisplay">
+                        <button onclick="inicia()">Nova Palavra</button>
+                    </div>
+                    <div id="dvplavra" class="dvdisplay">
+                        <input type="text" id="letra0" class="letra" maxlength="1">
+                        <input type="text" id="letra1" class="letra" maxlength="1">
+                        <input type="text" id="letra2" class="letra" maxlength="1">
+                        <input type="text" id="letra3" class="letra" maxlength="1">
+                        <input type="text" id="letra4" class="letra" maxlength="1">
+                        <input type="text" id="letra5" class="letra" maxlength="1">
+                        <input type="text" id="letra6" class="letra" maxlength="1">
+                        <input type="text" id="letra7" class="letra" maxlength="1">
+                        <input type="text" id="letra8" class="letra" maxlength="1">
+                        <input type="text" id="letra9" class="letra" maxlength="1">
+                        <input type="text" id="letra10" class="letra" maxlength="1">
+                        <input type="text" id="letra11" class="letra" maxlength="1">
+                    </div>
+                    <div id="dvjogador" class="dvdisplay">
+                        <div id="controlesJogador">
+                            <div id="dvletrasdigitadas">Letras digitadas: </div>
+                            <br>
+                            <input type="text" id="letraJ" maxlength="1">
+                            <button onclick="jogar()">Jogar</button>
+                            <button onclick="dica()">Dica</button>
+                            <div id="dvmsg"></div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <script>
+            var biblioteca = ["coxinha", "kibe", "macarrao", "lasanha", "chimarrao", "refrigerante", "vinho", "suco", "cachorro", "gato", "coelho", "raposa", "professor", "aeronauta", "bombeiro", "pintor"];
+            var qtde = biblioteca.length - 1;
+            var pos = Math.round(Math.random() * qtde);
+            var palavra = biblioteca[pos];
+            var tam = palavra.length;
+            var cxLetras = [];
+            var acertos;
+            var errosMax = 7;
+            var erros = 0;
+            var acertou = false;
+            var jogando = false;
+            var jog;
+
+            function defineLetras(length) {
+
+                for (var i = 0; i < 12; i++) {
+                    document.getElementById("letra" + i).value = "";
+                    document.getElementById("letra" + i).style.display = "none";
+                }
+                for (var i = 0; i < length; i++) {
+                    document.getElementById("letra" + i).style.display = "inline-block";
+                }
+            }
+
+            function jogar() {
+                jog.focus();
+                if (jog.value != "") {
+                    if (jogando) {
+                        var obj;
+                        var letraTmp;
+                        var letra;
+                        var pesq;
+                        letra = jog.value;
+                        jog.value = "";
+                        pesq = palavra.match(letra);
+                        acertou = false;
+                        while (pesq != null) {
+                            letraTmp = palavra.search(letra);
+                            obj = document.getElementById("letra" + letraTmp).value = letra;
+                            palavra = palavra.replace(letra, '0');
+                            acertos++;
+                            pesq = palavra.match(letra);
+                            acertou = true;
+                        }
+                        if (!acertou) {
+                            document.getElementById("dvletrasdigitadas").innerHTML += letra.toUpperCase() + " ";
+                            erros++;
+                            if (erros < 7) {
+                                document.getElementById("img").src = erros + 1 + ".png";
+                            } else {
+                                document.getElementById("img").src = "8.png";
+                                document.getElementById("dvmsg").innerHTML = "Clique em Nova Palavra para jogar novamente.";
+                                jogando = false;
+                            }
+                        }
+                        if (acertos == tam) {
+                            document.getElementById("img").src = "0.png";
+                            document.getElementById("dvmsg").innerHTML = "Clique em Nova Palavra para jogar novamente.";
+                            jogando = false;
+                        }
+                    }
+                }
+            }
+
+            function inicia() {
+                document.getElementById("dvmsg").innerHTML = "";
+                jogando = true;
+                jog = document.getElementById("letraJ");
+                jog.value = "";
+                jog.focus();
+                acertos = 0;
+                erros = 0;
+                acertou = false;
+                document.getElementById("dvletrasdigitadas").innerHTML = "Letras digitadas: ";
+                pos = Math.round(Math.random() * qtde);
+                palavra = biblioteca[pos];
+                tam = palavra.length;
+                defineLetras(tam);
+                document.getElementById("img").src = "1.png";
+            }
+
+            function dica() {
+                if (pos < 4) {
+                    document.getElementById("dvmsg").innerHTML = "É uma comida";
+                } else if (pos < 8){
+                    document.getElementById("dvmsg").innerHTML = "É uma bebida";
+                } else if (pos < 12){
+                    document.getElementById("dvmsg").innerHTML = "É um animal";
+                } else if (pos < 16){
+                    document.getElementById("dvmsg").innerHTML = "É uma profissão";
+                }
+            }
+            window.onload = inicia();
+        </script>
+    </body>
+
+</html>
